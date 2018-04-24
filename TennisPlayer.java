@@ -1,6 +1,6 @@
 public class TennisPlayer {
 
-    private String playerId;
+    private String Id;
 
     private String firstName;
 
@@ -13,19 +13,19 @@ public class TennisPlayer {
     private int year;
 
     public TennisPlayer(String playerId, String firstName, String lastName, int year, String country) {
-        setPlayerId(playerId);
+        setId(playerId);
         setFirstName(firstName);
         setLastName(lastName);
         setYear(year);
         setCountry(country);
     }
 
-    public String getPlayerId() {
-        return this.playerId;
+    public String getId() {
+        return this.Id;
     }
 
-    private void setPlayerId(String playerId) {
-        this.playerId = playerId;
+    private void setId(String Id) {
+        this.Id = Id;
     }
 
     public String getFirstName() {

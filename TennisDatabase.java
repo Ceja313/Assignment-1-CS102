@@ -12,11 +12,13 @@ public class TennisDatabase {
 
     public void loadFromFile(String [] args) {
         if (args.length > 0) {
-            String inputFileName = args[0];
+            String inputFileName= args[0];
+
             if (args.length > 2) {
                 System.out.println("There is more than 1 parameter, only using the first."
                         + "The list of args is : " + args);
             }
+
 
             try (Scanner scanner = new Scanner(new File(inputFileName))) {
                 readFileStoreData(scanner);
@@ -25,6 +27,8 @@ public class TennisDatabase {
                 throw new NullPointerException("Error during reading or writing, command line "
                         + "argument file may not exist." + args);
             }
+
+
         } else {
             System.out.println("Sorry, TennisDatabase has no argument file to read from ");
         }
@@ -62,6 +66,10 @@ public class TennisDatabase {
     private void createMatch(String[] matchInformation) {
         final TennisMatch match = new TennisMatch(matchInformation[0], matchInformation[1]
                 , parseInt(matchInformation[2]), matchInformation[3], matchInformation[4]);
+    }
+
+    public void printAllMatches() {
+        tmc.printAllMatches();
     }
 
 }
