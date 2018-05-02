@@ -6,9 +6,9 @@ import static java.lang.Integer.parseInt;
 
 public class TennisDatabase {
 
-    private TennisPlayersContainer tpc = null;
+    private TennisPlayersContainer tpc = new TennisPlayersContainer();
 
-    private TennisMatchesContainer tmc = null;
+    private TennisMatchesContainer tmc = new TennisMatchesContainer();
 
     public void loadFromFile(String [] args) {
         if (args.length > 0) {
@@ -58,18 +58,30 @@ public class TennisDatabase {
         }
     }
 
-    private void createPlayer(String[] playerInformation) {
+    public void createPlayer(String[] playerInformation) {
         final TennisPlayer player = new TennisPlayer(playerInformation[0], playerInformation[1]
                 , playerInformation[2], parseInt(playerInformation[3]), playerInformation[4]);
+
     }
 
-    private void createMatch(String[] matchInformation) {
-        final TennisMatch match = new TennisMatch(matchInformation[0], matchInformation[1]
-                , parseInt(matchInformation[2]), matchInformation[3], matchInformation[4]);
+    public void createMatch(String[] matchInformation) {
+        try {
+            if (matchInformation.length == 5) {
+                final TennisMatch match = new TennisMatch(matchInformation[0], matchInformation[1]
+                        , matchInformation[2], matchInformation[3], matchInformation[4]);
+            } else {
+                throw new TennisDatabaseException("Do not have sufficient information for a TennisMatch");
+            }
+        } catch (TennisDatabaseException ex) {
+            System.out.println("Issue creating the match, invalid input for a field");
+            System.out.println("Given Information");
+            for(int index = 0; index < matchInformation.length; index++) {
+                System.out.println("Data " + index + ": " + matchInformation[index]);
+            }
+        }
     }
 
     public void printAllMatches() {
         tmc.printAllMatches();
     }
-
 }
