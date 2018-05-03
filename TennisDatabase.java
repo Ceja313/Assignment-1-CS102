@@ -59,9 +59,25 @@ public class TennisDatabase {
     }
 
     public void createPlayer(String[] playerInformation) {
-        final TennisPlayer player = new TennisPlayer(playerInformation[0], playerInformation[1]
-                , playerInformation[2], parseInt(playerInformation[3]), playerInformation[4]);
+        try {
+            if (playerInformation.length == 5) {
+                final TennisPlayer player = new TennisPlayer(playerInformation[0], playerInformation[1]
+                        , playerInformation[2], parseInt(playerInformation[3]), playerInformation[4]);
+                tpc.insertPlayer(player);
+            } else {
+                throw new TennisDatabaseException("Do not have sufficient information for a TennisPlayer");
+            }
+        } catch (TennisDatabaseException ex) {
+            System.out.println("Issue creating the match, invalid input for a field");
+            System.out.println("Given Information");
+            for (int index = 0; index < playerInformation.length; index++) {
+                System.out.println("Data " + index + ": " + playerInformation[index]);
+            }
+        }
+    }
 
+    public void userCreatePlayer(TennisPlayer player) {
+        tpc.insertPlayer(player);
     }
 
     public void createMatch(String[] matchInformation) {
@@ -69,6 +85,7 @@ public class TennisDatabase {
             if (matchInformation.length == 5) {
                 final TennisMatch match = new TennisMatch(matchInformation[0], matchInformation[1]
                         , matchInformation[2], matchInformation[3], matchInformation[4]);
+                tmc.insertMatch(match);
             } else {
                 throw new TennisDatabaseException("Do not have sufficient information for a TennisMatch");
             }
@@ -81,7 +98,19 @@ public class TennisDatabase {
         }
     }
 
-    public void printAllMatches() {
+    public void userCreateMatch(TennisMatch match) {
+        tmc.insertMatch(match);
+    }
+
+    protected void printAllTennisPlayers() {
+        tpc.printAllPlayers();
+    }
+
+    protected void printTennisMatchesOfPlayer(String playerId) {
+        tpc.printMatchesOfPlayer(playerId);
+    }
+    protected void printAllMatches() {
         tmc.printAllMatches();
     }
+
 }
