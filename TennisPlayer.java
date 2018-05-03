@@ -1,4 +1,4 @@
-public class TennisPlayer {
+public class TennisPlayer implements TennisPlayerInterface{
 
     private String Id;
 
@@ -8,15 +8,17 @@ public class TennisPlayer {
 
     private String country;
 
-    private String winLossRecord;
+    //private String winLossRecord;
+
+    private boolean dummy;
 
     private int year;
 
-    public TennisPlayer(String playerId, String firstName, String lastName, int year, String country) {
+    TennisPlayer(String playerId, String firstName, String lastName, int year, String country) {
         setId(playerId);
         setFirstName(firstName);
         setLastName(lastName);
-        setYear(year);
+        setBirthYear(year);
         setCountry(country);
     }
 
@@ -32,7 +34,7 @@ public class TennisPlayer {
         return this.firstName;
     }
 
-    private void setFirstName(String firstName) {
+    void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
@@ -40,15 +42,16 @@ public class TennisPlayer {
         return this.lastName;
     }
 
-    private void setLastName(String lastName) {
+    void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public int getYear() {
+
+    public int getBirthYear() {
         return this.year;
     }
 
-    private void setYear(int year) {
+    void setBirthYear(int year) {
         this.year = year;
     }
 
@@ -56,20 +59,38 @@ public class TennisPlayer {
         return this.country;
     }
 
-    private void setCountry(String country) {
+    void setCountry(String country) {
         this.country = country;
     }
 
-    public String getWinLossRecord() {
-        return this.winLossRecord;
+//    public String getWinLossRecord() {
+//        return this.winLossRecord;
+//    }
+//
+//    // Will I want to do the logic here or within the database?
+//    private void setWinLossRecord(String winLossRecord) {
+//        this.winLossRecord = winLossRecord;
+//    }
+
+    public void print() {
+        System.out.println("Id: " + getId());
+        System.out.println("FirstName: " + getFirstName());
+        System.out.println("LastName: " + getLastName());
+        System.out.println("Country: " + getCountry());
+        // may need to implement this
+        //System.out.println("Win Loss Record " + getWinLossRecord());
     }
 
-    // Will I want to do the logic here or within the database?
-    private void setWinLossRecord(String winLossRecord) {
-        this.winLossRecord = winLossRecord;
+    boolean isDummy() {
+        return dummy;
     }
 
-    public String print() {
-        return "What to put";
+    void setDummy(boolean dummy) {
+        this.dummy = dummy;
+    }
+
+    @Override
+    public int compareTo(TennisPlayer o) {
+        return getId().compareTo(o.getId());
     }
 }
