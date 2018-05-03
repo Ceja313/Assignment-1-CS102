@@ -45,7 +45,7 @@ public class Assignment1 {
                 case 4:
                     System.out.println("What is the Id, firstName, lastName, year, and country of the player? ");
                     System.out.println("For example a response could be: Jeff313,Jeffery,Ceja,2012,America");
-                    String playerInformation = userInput.nextLine();
+                    String playerInformation = userInput.next();
                     String [] playerInfo = playerInformation.split(",");
                     TennisPlayer player = new TennisPlayer(playerInfo[0], playerInfo[1], playerInfo[2],
                             parseInt(playerInfo[3]), playerInfo[4]);
@@ -55,7 +55,7 @@ public class Assignment1 {
                     System.out.println("What is the firstPlayerId, secondPlayerId, date, location, and scores " +
                             "of the match?");
                     System.out.println("For example a response could be: FED81/DJO87/20150817/CINCINNATI/7-6, 6-4");
-                    String matchInformation = userInput.nextLine();
+                    String matchInformation = userInput.next();
                     String [] matchInfo = matchInformation.split("/");
                     try {
                         TennisMatch match = new TennisMatch(matchInfo[0], matchInfo[1], matchInfo[2], matchInfo[3],
@@ -86,14 +86,13 @@ public class Assignment1 {
 
     private void printAllTennisMatchesOfAPlayer(Scanner userInput, TennisDatabase database) {
         System.out.print("Enter Tennis Players Id : ");
-        String playerId = userInput.nextLine();
+        String playerId = userInput.next();
         database.printTennisMatchesOfPlayer(playerId);
 
     }
 
     private void printAllTennisMatches(TennisDatabase database) {
         database.printAllMatches();
-
     }
 
     private void insertNewPlayer(TennisDatabase database, TennisPlayer player) {
