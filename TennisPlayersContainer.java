@@ -52,43 +52,77 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
 
     @Override
     public void insertPlayer(TennisPlayer player) throws TennisDatabaseRuntimeException {
-        TennisPlayer sameId = getPlayer(player.getId() );
-        if (sameId != null) {
-            // may need to take out dummy implementation
-            if (!sameId.isDummy() ) {
-                throw new TennisDatabaseRuntimeException("Duplicate player");
-            } else {
-                sameId.setFirstName(player.getFirstName());
-                sameId.setLastName(player.getLastName());
-                sameId.setBirthYear(player.getBirthYear());
-                sameId.setCountry(player.getCountry());
-                sameId.setDummy(false);
-            }
+        TennisPlayerNode newNode = new TennisPlayerNode(player);
+        // List is empty, Special Case
+        if ( head == null) {
+            head = newNode;
+            newNode.setNext(newNode);
+            newNode.setPrev(newNode);
+            numPlayers++;
         } else {
-            TennisPlayerNode prevNode = null;
-            TennisPlayerNode currNode = head;
-            int indexCurrNode = 0;
-            while( (indexCurrNode < numPlayers) &&
-                    (currNode != null) &&
-                    (player.compareTo(currNode.getPlayer() ) > 0)) {
-                prevNode = currNode;
-                currNode = currNode.getNext();
-                indexCurrNode++;
+            // List is not empty, regular case
+            TennisPlayerNode nodeAfterIns = head;
+            TennisPlayerNode nodeBeforeIns = head.getPrev();
+            int nodeAfterInsIdx = 1;
+            while ( nodeAfterInsIdx <= numPlayers
+                && nodeAfterIns.getPlayer().compareTo(player) <= 0) {
+                nodeBeforeIns = nodeAfterIns;
+                nodeAfterIns = nodeAfterIns.getNext();
+                nodeAfterInsIdx++;
             }
-            TennisPlayerNode newNode = new TennisPlayerNode(player);
-            if(prevNode == null) {
+            if(nodeAfterInsIdx == 1) {
                 head = newNode;
-                newNode.setPrev(newNode);
-                newNode.setNext(newNode);
+                newNode.setNext(nodeAfterIns);
+                newNode.setPrev(nodeBeforeIns);
+                nodeBeforeIns.setNext(newNode);
+                nodeAfterIns.setPrev(newNode);
+                numPlayers++;
             } else {
-                newNode.setPrev(prevNode);
-                newNode.setNext(currNode);
-                prevNode.setNext(newNode);
-                if (currNode != null)
-                currNode.setPrev(newNode);
+                newNode.setNext(nodeAfterIns);
+                newNode.setPrev(nodeBeforeIns);
+                nodeBeforeIns.setNext(newNode);
+                nodeAfterIns.setPrev(newNode);
                 numPlayers++;
             }
         }
+//        TennisPlayer sameId = getPlayer(player.getId() );
+//        if (sameId != null) {
+//            // may need to take out dummy implementation
+//            if (!sameId.isDummy() ) {
+//                throw new TennisDatabaseRuntimeException("Duplicate player");
+//            } else {
+//                sameId.setFirstName(player.getFirstName());
+//                sameId.setLastName(player.getLastName());
+//                sameId.setBirthYear(player.getBirthYear());
+//                sameId.setCountry(player.getCountry());
+//                sameId.setDummy(false);
+//            }
+//        } else {
+//            TennisPlayerNode prevNode = null;
+//            TennisPlayerNode currNode = head;
+//            int indexCurrNode = 0;
+//            while( (indexCurrNode < numPlayers) &&
+//                    (currNode != null) &&
+//                    (player.compareTo(currNode.getPlayer() ) > 0)) {
+//                prevNode = currNode;
+//                currNode = currNode.getNext();
+//                indexCurrNode++;
+//            }
+//            TennisPlayerNode newNode = new TennisPlayerNode(player);
+//            if(prevNode == null) {
+//                head = newNode;
+//                newNode.setPrev(newNode);
+//                newNode.setNext(newNode);
+//                numPlayers++;
+//            } else {
+//                newNode.setPrev(prevNode);
+//                newNode.setNext(currNode);
+//                prevNode.setNext(newNode);
+//                if (currNode != null)
+//                currNode.setPrev(newNode);
+//                numPlayers++;
+//            }
+//        }
     }
 
     @Override
@@ -139,8 +173,9 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
     }
 
     public void printMatchesOfPlayer(String playerId) throws TennisDatabaseRuntimeException {
-        TennisPlayer player = getPlayer(playerId);
+        TennisPlayerNode player = getPlayerNode(playerId);
         if (player != null) {
+            player.printMatches();
         } else {
             throw new TennisDatabaseRuntimeException("There does not exist a player with the selected Id");
         }
