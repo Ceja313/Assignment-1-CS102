@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 import static java.lang.Integer.parseInt;
 
 public class TennisMatch implements TennisMatchInterface {
@@ -10,11 +12,11 @@ public class TennisMatch implements TennisMatchInterface {
 
     private String locationOfMatch;
 
-    private String scores;
-
     private String winner;
 
-    private TennisMatchSetScore score = new TennisMatchSetScore();
+    private String score;
+
+    private TennisMatchSetScore scores;
 
     /*
     Desc.: Processes the match score and returns the set score.
@@ -22,30 +24,70 @@ public class TennisMatch implements TennisMatchInterface {
     Output: The validity of the input match score. (Returns true of the score is valid)
     worry about validity after valid scores work
      */
-    private boolean processMatchScore( String score, TennisMatchSetScore setScore) {
+    private boolean processMatchScore( String score, TennisMatchSetScore scores) {
+        if (score.length() == 0) {
+            return true;
+        } else {
+            Scanner scoreScanner = new Scanner(score).useDelimiter(",");
+            String set1Score = scoreScanner.next();
+            Scanner set1Scanner = new Scanner(set1Score).useDelimiter("-");
+            int gamesPlayer1 = set1Scanner.nextInt();
+            int gamesPlayer2 = set1Scanner.nextInt();
+            if (gamesPlayer1 > gamesPlayer2) {
+                scores.setsPlayer1++;
+            } else if (gamesPlayer1 < gamesPlayer2) {
+                scores.setsPlayer2++;
+            } else {
+                return false;
+            }
 
-        return false;
+            if (set1Score.length() == score.length()) {
+                return true;
+            } else {
+                String restScore = score.substring(set1Score.length() + 1);
+                return processMatchScore(restScore, scores);
+            }
+        }
     }
-
+    //A tennis match when inserted should have a reference from the tennismatchescontainer, tennismatcheslist
+    // of the first player of the match,
+    // tennismatcheslist of the second player of the match
     public TennisMatch(String firstPlayerId, String secondPlayerId, String tennisMatchDate
-            , String locationOfMatch, String scores) {
-        setFirstPlayerId(firstPlayerId);
-        setSecondPlayerId(secondPlayerId);
-        setTennisMatchDate(tennisMatchDate);
-        setLocationOfMatch(locationOfMatch);
-        setScores(scores);
-    }
+            , String locationOfMatch, String score) throws TennisDatabaseException {
+        if(firstPlayerId == null) {
+            throw new TennisDatabaseException("firstPlayer Id is not a valid Id");
+        } else if (secondPlayerId == null) {
+            throw new TennisDatabaseException("Second player Id is not a valid Id");
+        } else if (tennisMatchDate == null) {
+            throw new TennisDatabaseException("tennisMatchDate is not a valid date");
+        } else if (locationOfMatch == null) {
+            throw new TennisDatabaseException("locationOfMatch is not valid");
+        } else if (scores == null) {
+            throw new TennisDatabaseException("scores is not valid");
+        } else {
+            setFirstPlayerId(firstPlayerId);
+            setSecondPlayerId(secondPlayerId);
+            setTennisMatchDate(tennisMatchDate);
+            setLocationOfMatch(locationOfMatch);
+            setScore(score);
+            this.scores = new TennisMatchSetScore();
 
-    public String getPlayer1Id() {
-        return this.firstPlayerId;
+            boolean scoreValid = processMatchScore(score, scores);
+            if (!scoreValid) {
+                throw new TennisDatabaseException("Tennis match score not valid");
+            }
+            if (scores.setsPlayer1 > scores.setsPlayer2) {
+                winner = firstPlayerId;
+            } else if (scores.setsPlayer1 < scores.setsPlayer2) {
+                winner = secondPlayerId;
+            } else {
+                throw new TennisDatabaseException("Tennis match score not valid");
+            }
+        }
     }
 
     private void setFirstPlayerId(String firstPlayerId) {
         this.firstPlayerId = firstPlayerId;
-    }
-
-    public String getPlayer2Id() {
-        return this.secondPlayerId;
     }
 
     private void setSecondPlayerId(String secondPlayerId) {
@@ -60,48 +102,21 @@ public class TennisMatch implements TennisMatchInterface {
         this.tennisMatchDate = tennisMatchDate;
     }
 
-    public String getTournament() {
-        return this.locationOfMatch;
-    }
 
     private void setLocationOfMatch(String locationOfMatch) {
         this.locationOfMatch = locationOfMatch;
     }
 
-    public String getScore() {
-        return this.scores;
+    private void setScore(String score) {
+        this.score = score;
     }
 
-    private void setScores(String scores) {
-        this.scores = scores;
+    public String getPlayer1Id() {
+        return this.firstPlayerId;
     }
 
-    public String getWinner() {
-
-
-        return winner;
-    }
-
-    public int findWinner(String scores) {
-        if (parseInt(scores.substring(0,1)) > parseInt(scores.substring(2,2))) {
-            score.setsPlayer1++;
-            findWinner(scores.substring(4, scores.length()));
-        } else if (parseInt(scores.substring(0,1)) < parseInt(scores.substring(2,2))) {
-            score.setsPlayer2++;
-            findWinner(scores.substring(4, scores.length()));
-        }
-
-        return 0;
-    }
-
-    public void setWinner(String winner) {
-        score.setsPlayer2 = 0;
-        score.setsPlayer1 = 0;
-        if (findWinner(getScore()) > 1) {
-            this.winner = this.firstPlayerId;
-        } else {
-            this.winner = this.secondPlayerId;
-        }
+    public String getPlayer2Id() {
+        return this.secondPlayerId;
     }
 
     public int getDateMonth() {
@@ -116,13 +131,39 @@ public class TennisMatch implements TennisMatchInterface {
         return parseInt(getTennisMatchDate().substring(3,5));
     }
 
-    public void print() {
+    public String getTournament() {
+        return this.locationOfMatch;
+    }
 
+    public String getScore() { return scores.setsPlayer1 + "-" + scores.setsPlayer2;}
+
+    public String getWinner() {
+        return winner;
+    }
+    public void print() {
+        System.out.print( firstPlayerId + ", " );
+        System.out.print( secondPlayerId + ", ");
+        System.out.print(getDateYear() + "-" + getDateMonth() + "-" + getDateDay() + ", ");
+        System.out.print( getTournament() + ", ");
+        System.out.print(score + ", ");
+        System.out.print("Winner: " + winner);
+        System.out.println();
     }
 
 
     @Override
-    public int compareTo(TennisMatch o) {
-        return 0;
+    public int compareTo(TennisMatch match) {
+        if(getDateYear() < match.getDateYear()) {
+            return 1;
+        } else if(getDateYear() == match.getDateYear()
+                && getDateMonth() < match.getDateMonth()) {
+            return 1;
+        } else if(getDateYear() == match.getDateYear()
+                && getDateMonth() == match.getDateMonth()
+                && getDateDay() < match.getDateDay()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
