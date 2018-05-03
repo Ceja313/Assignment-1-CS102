@@ -62,7 +62,7 @@ public class TennisMatch implements TennisMatchInterface {
             throw new TennisDatabaseException("tennisMatchDate is not a valid date");
         } else if (locationOfMatch == null) {
             throw new TennisDatabaseException("locationOfMatch is not valid");
-        } else if (scores == null) {
+        } else if (score == null) {
             throw new TennisDatabaseException("scores is not valid");
         } else {
             setFirstPlayerId(firstPlayerId);
@@ -120,15 +120,15 @@ public class TennisMatch implements TennisMatchInterface {
     }
 
     public int getDateMonth() {
-        return parseInt(getTennisMatchDate().substring(0,2));
+        return parseInt(getTennisMatchDate().substring(4,6));
     }
 
     public int getDateYear() {
-        return parseInt(getTennisMatchDate().substring(6,8));
+        return parseInt(getTennisMatchDate().substring(0,4));
     }
 
     public int getDateDay() {
-        return parseInt(getTennisMatchDate().substring(3,5));
+        return parseInt(getTennisMatchDate().substring(6,8));
     }
 
     public String getTournament() {
