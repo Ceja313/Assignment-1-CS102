@@ -3,16 +3,14 @@ public class TennisPlayerNode implements  TennisPlayerNodeInterface {
     private TennisPlayer player;
     private TennisMatchesList list;
     private TennisPlayerNode prev;
-    private TennisPlayerNode next;
+    protected TennisPlayerNode next;
 
     public TennisPlayerNode( TennisPlayer player) {
         this.player = player;
         this.list = new TennisMatchesList();
         this.prev = null;
+        this.next = null;
     }
-
-    public void insertPlayer
-
 
     @Override
     public TennisPlayer getPlayer() {
@@ -20,32 +18,32 @@ public class TennisPlayerNode implements  TennisPlayerNodeInterface {
     }
 
     @Override
-    public Node getPrev() {
-        return null;
+    public TennisPlayerNode getPrev() {
+        return prev;
     }
 
     @Override
-    public Node getNext() {
-        return null;
+    public TennisPlayerNode getNext() {
+        return next;
     }
 
     @Override
-    public void setPrev(Node p) {
-
+    public void setPrev(TennisPlayerNode p) {
+        prev = p;
     }
 
     @Override
-    public void setNext(Node n) {
-
+    public void setNext(TennisPlayerNode n) {
+        next = n;
     }
 
     @Override
     public void insertMatch(TennisMatch m) throws TennisDatabaseRuntimeException {
-
+        list.insertMatch(m);
     }
 
     @Override
     public void printMatches() throws TennisDatabaseRuntimeException {
-
+        list.printMatches();
     }
 }
