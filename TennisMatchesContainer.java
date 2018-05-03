@@ -22,19 +22,26 @@ public class TennisMatchesContainer implements TennisMatchesContainerInterface{
         if (matches[0] == null) {
             matches[0] = match;
         } else {
-            int indexToPutDate;
-            for (int index = 0; index < numberOfMatches; index++) {
-                if (matches[index].compareTo(match) != 0) {
-                    indexToPutDate = index;
-                }
-            }
-            for (int index = 1; index < numberOfMatches; index++) {
-                if (matches[(index - 1)].getDateYear() == matches[index].getDateYear()) {
-
+            int index2 = 0;
+            TennisMatch matchHolder;
+            TennisMatch secondMatchHolder;
+            for (int index = 0; index < numberOfMatches ; index++) {
+                if(index2 != 1) {
+                    if (matches[index] != null && matches[index].compareTo(match) != 0) {
+                        matchHolder = matches[index];
+                        matches[index] = match;
+                        index2++;
+                        for(int index3 = index; index3 < numberOfMatches; index3++) {
+                            secondMatchHolder = matches[index3];
+                            matches[index3] = matchHolder;
+                            if(index3 == numberOfMatches - 1) {
+                                matches[numberOfMatches - 1] = secondMatchHolder;
+                            }
+                        }
+                    }
                 }
             }
         }
-        matches[numberOfMatches] = match;
         numberOfMatches++;
     }
 
