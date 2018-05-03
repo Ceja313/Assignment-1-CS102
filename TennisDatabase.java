@@ -25,7 +25,7 @@ public class TennisDatabase {
             } catch (IOException ex) {
                 System.out.println("Error during reading, command line argument file may not exist.");
                 throw new NullPointerException("Error during reading or writing, command line "
-                        + "argument file may not exist." + args);
+                        + "argument file may not exist. " + args[0]);
             }
 
 
@@ -60,9 +60,9 @@ public class TennisDatabase {
 
     public void createPlayer(String[] playerInformation) {
         try {
-            if (playerInformation.length == 5) {
-                final TennisPlayer player = new TennisPlayer(playerInformation[0], playerInformation[1]
-                        , playerInformation[2], parseInt(playerInformation[3]), playerInformation[4]);
+            if (playerInformation.length == 6) {
+                final TennisPlayer player = new TennisPlayer(playerInformation[1], playerInformation[2]
+                        , playerInformation[3], parseInt(playerInformation[4]), playerInformation[5]);
                 tpc.insertPlayer(player);
             } else {
                 throw new TennisDatabaseException("Do not have sufficient information for a TennisPlayer");
@@ -82,9 +82,9 @@ public class TennisDatabase {
 
     public void createMatch(String[] matchInformation) {
         try {
-            if (matchInformation.length == 5) {
-                final TennisMatch match = new TennisMatch(matchInformation[0], matchInformation[1]
-                        , matchInformation[2], matchInformation[3], matchInformation[4]);
+            if (matchInformation.length == 6) {
+                final TennisMatch match = new TennisMatch(matchInformation[1], matchInformation[2]
+                        , matchInformation[3], matchInformation[4], matchInformation[5]);
                 tmc.insertMatch(match);
             } else {
                 throw new TennisDatabaseException("Do not have sufficient information for a TennisMatch");
