@@ -1,54 +1,93 @@
+/**
+ * The Class TennisMatchesContainer, used as a container for all TennisMatches.
+ * @author Jeffery Ceja
+ */
+
 public class TennisMatchesContainer implements TennisMatchesContainerInterface{
+
     private TennisMatch[] matches;
     private int numberOfMatches;
 
-    public TennisMatchesContainer() {
+    /**
+     * Constructor to create a TennisMatchesContainer with a size of 10 holding 0 matches.
+     */
+    TennisMatchesContainer() {
         matches = new TennisMatch[10];
         numberOfMatches = 0;
     }
 
-    // Add a person to the List of Persons in the last position
+    /**
+     * Method used to add a person to the list of matches in the last position
+     *
+     * if the numberOfMatches is equal to the length of the array increase the size of the array by 2
+     *
+     * now that we are sure the index fits, assign the match to matches[numberOfMatches]
+     * increment the numberOfMatches
+     *
+     * @param match The TennisMatch to add
+     * @throws TennisDatabaseRuntimeException Exception thrown if there is an attempt to access outside of the array
+     */
     @Override
     public void insertMatch(TennisMatch match) throws TennisDatabaseRuntimeException {
         if (numberOfMatches == matches.length) {
-            // The array is full!!!
-            // We have to create a new, bigger array and copy all elements
             TennisMatch[] temporaryMatchHolder = new TennisMatch[matches.length * 2];
             for (int index = 0; index < matches.length; index++)
                 temporaryMatchHolder[index] = matches[index];
             matches = temporaryMatchHolder;
         }
-        // Now we are sure that numberOfMatches < matches.length
-        if (matches[0] == null) {
-            matches[0] = match;
-        } else {
-            int index2 = 0;
-            TennisMatch matchHolder;
-            TennisMatch secondMatchHolder;
-            for (int index = 0; index < numberOfMatches ; index++) {
-                if(index2 != 1) {
-                    if (matches[index] != null && matches[index].compareTo(match) != 0) {
-                        matchHolder = matches[index];
-                        matches[index] = match;
-                        index2++;
-                        for(int index3 = index; index3 < numberOfMatches; index3++) {
-                            secondMatchHolder = matches[index3];
-                            matches[index3] = matchHolder;
-                            if(index3 == numberOfMatches - 1) {
-                                matches[numberOfMatches - 1] = secondMatchHolder;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        matches[numberOfMatches] = match;
         numberOfMatches++;
+
     }
 
+    /**
+     * call for the sorting of the matches array by date
+     * iterate through the array and print the match information
+     */
     @Override
     public void printAllMatches() {
+        sortDate(matches);
         for(int index = 0; index < numberOfMatches; index++) {
             matches[index].print();
         }
+    }
+
+    /**
+     * iterate until passes is equal to the length of the array
+     *      assign minimum index to passes
+     *      iterate through and try to find a match with an earlier date
+     *          if there is a match with an earlier date, assign the index to minimum index
+     *      use the swap method to call for the swap of minimumIndex and passes in the array
+     * @param arrayToSort TennisMatch array to sort
+     */
+    private void sortDate(TennisMatch [] arrayToSort)
+    {
+        for(int passes = 0; passes < numberOfMatches; passes++)
+        {
+            int minimumIndex = passes;
+            for(int index = passes+1; index < numberOfMatches;index++)
+            {
+                if(arrayToSort[index].compareTo(arrayToSort[minimumIndex]) != 0)
+                {
+                    minimumIndex = index;
+                }
+            }
+            swap(arrayToSort,minimumIndex,passes);
+        }
+    }
+
+    /**
+     * swapper equals array[firstIndex]
+     * array[firstIndex] equals array[secondIndex]
+     * array[secondIndex] equals swapper
+     * @param array TennisMatch array to swap placement
+     * @param firstIndex Index of first value to swap
+     * @param secondIndex Index of second value to swap
+     */
+    private void swap(TennisMatch [] array, int firstIndex, int secondIndex)
+    {
+        TennisMatch swapper = array[firstIndex];
+        array[firstIndex] = array[secondIndex];
+        array[secondIndex] = swapper;
     }
 }
