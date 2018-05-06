@@ -1,11 +1,19 @@
+/**
+ * The Class TennisPlayerNode, used as a Node for a tennis player.
+ * @author Jeffery Ceja
+ */
 public class TennisPlayerNode implements  TennisPlayerNodeInterface {
 
     private TennisPlayer player;
     private TennisMatchesList list;
     private TennisPlayerNode prev;
-    protected TennisPlayerNode next;
+    TennisPlayerNode next;
 
-    public TennisPlayerNode( TennisPlayer player) {
+    /**
+     * Constructor to create a tennis player node
+     * @param player tennis player to store in the node
+     */
+    TennisPlayerNode( TennisPlayer player) {
         this.player = player;
         this.list = new TennisMatchesList();
         this.prev = null;
@@ -28,20 +36,24 @@ public class TennisPlayerNode implements  TennisPlayerNodeInterface {
     }
 
     @Override
-    public void setPrev(TennisPlayerNode p) {
-        prev = p;
+    public void setPrev(TennisPlayerNode player) {
+        prev = player;
     }
 
     @Override
-    public void setNext(TennisPlayerNode n) {
-        next = n;
+    public void setNext(TennisPlayerNode node) {
+        next = node;
     }
 
     @Override
-    public void insertMatch(TennisMatch m) throws TennisDatabaseRuntimeException {
-        list.insertMatch(m);
+    public void insertMatch(TennisMatch match) throws TennisDatabaseRuntimeException {
+        list.insertMatch(match);
     }
 
+    /**
+     * Method used to print the matches of a tennis player from the list.
+     * @throws TennisDatabaseRuntimeException Exception thrown if there is an issue printing the matches
+     */
     @Override
     public void printMatches() throws TennisDatabaseRuntimeException {
         list.printMatches();
