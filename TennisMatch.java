@@ -1,7 +1,10 @@
 import java.util.Scanner;
-
 import static java.lang.Integer.parseInt;
 
+/**
+ * The Class TennisMatch, used to create and hold information of a tennis match.
+ * @author Jeffery Ceja
+ */
 public class TennisMatch implements TennisMatchInterface {
 
     private String firstPlayerId;
@@ -18,41 +21,125 @@ public class TennisMatch implements TennisMatchInterface {
 
     private TennisMatchSetScore scores;
 
-    /*
-    Desc.: Processes the match score and returns the set score.
-    Input: The match score as a String, and a set score (Output variable).
-    Output: The validity of the input match score. (Returns true of the score is valid)
-    worry about validity after valid scores work
+    /**
+     * Method used to iterate a set of scores recursively and assign a winner of a tennis match.
+     *
+     * if the length of the score is 0
+     *      return true
+     * otherwise
+     *      instantiate a scanner to the score using , as the delimeter
+     *      assign score 1 to the next value of the scanner
+     *      instantiate a scanner to the score value using the delimeter -
+     *      assign the next int of the scanner to player 1 games
+     *      assign the next int of the scanner to player 2 games
+     *
+     *      if player 1 games is greater than player 2 games
+     *          increment the scores of the setsPlayer1
+     *      otherwise if the player 1 games is less than the player 2 games
+     *          increment the scores of the setsPlayer2
+     *      otherwise return false
+     *      if the length of score1 equals the length of score
+     *          return true
+     *      otherwise
+     *          assign the leftover values
+     *          recursively call the same method using the leftover values and scores as the parameter
+     * @param score The score to recursively shrink
+     * @param scores The scores to progressively increment
+     * @return Whether or not the recursive call is done
      */
     private boolean processMatchScore( String score, TennisMatchSetScore scores) {
+        // score length is 0, base case
         if (score.length() == 0) {
             return true;
         } else {
-            Scanner scoreScanner = new Scanner(score).useDelimiter(",");
-            String set1Score = scoreScanner.next();
-            Scanner set1Scanner = new Scanner(set1Score).useDelimiter("-");
-            int gamesPlayer1 = set1Scanner.nextInt();
-            int gamesPlayer2 = set1Scanner.nextInt();
-            if (gamesPlayer1 > gamesPlayer2) {
+            // standard call for the recursive shrinking of the problem
+            Scanner iteratingScore = new Scanner(score).useDelimiter(",");
+            String score1 = iteratingScore.next();
+            Scanner scanner1 = new Scanner(score1).useDelimiter("-");
+            int player1Games = scanner1.nextInt();
+            int player2Games = scanner1.nextInt();
+
+            // increment scores depending on who won
+            if (player1Games > player2Games) {
                 scores.setsPlayer1++;
-            } else if (gamesPlayer1 < gamesPlayer2) {
+            } else if (player1Games < player2Games) {
                 scores.setsPlayer2++;
             } else {
                 return false;
             }
 
-            if (set1Score.length() == score.length()) {
+            if (score1.length() == score.length()) {
                 return true;
             } else {
-                String restScore = score.substring(set1Score.length() + 1);
-                return processMatchScore(restScore, scores);
+                // recursively find the leftovers and call the method again
+                String leftover = score.substring(score1.length() + 1);
+                return processMatchScore(leftover, scores);
             }
         }
     }
-    //A tennis match when inserted should have a reference from the tennismatchescontainer, tennismatcheslist
-    // of the first player of the match,
-    // tennismatcheslist of the second player of the match
+
+    /**
+     * Constructor to create a Tennis match with the given information.
+     *
+     * Check if the match information is valid
+     * set the first player id to first player id
+     * set the second player id to second player id
+     * set the tennis match date to tennis match date
+     * set the location of match to the location of match
+     * set the score to the score
+     * assign scores to a new tennis match set score object
+     *
+     * check to see if score is valid by calling to process the match score
+     * if the score is not valid
+     *      throw a tennis database exception saying the tennis match score is not valid
+     * if the score of the first player is greater than the second player
+     *      assign the winners id to winner
+     * otherwise if the score of the second player is greater than the first player
+     *      assign the winners id to winner
+     * otherwise throw an exception saying the score is not valid
+     * @param firstPlayerId id of the first player
+     * @param secondPlayerId id of the second player
+     * @param tennisMatchDate date of the tennis match
+     * @param locationOfMatch location of the tennis match
+     * @param score scores from the tennis match
+     * @throws TennisDatabaseException Exception if information is invalid or score is invalid
+     */
     public TennisMatch(String firstPlayerId, String secondPlayerId, String tennisMatchDate
+            , String locationOfMatch, String score) throws TennisDatabaseException {
+        isMatchInfoValid(firstPlayerId, secondPlayerId, tennisMatchDate, locationOfMatch, score);
+        setFirstPlayerId(firstPlayerId);
+        setSecondPlayerId(secondPlayerId);
+        setTennisMatchDate(tennisMatchDate);
+        setLocationOfMatch(locationOfMatch);
+        setScore(score);
+        this.scores = new TennisMatchSetScore();
+
+        boolean scoreValid = processMatchScore(score, scores);
+        if (!scoreValid) {
+            throw new TennisDatabaseException("Tennis match score not valid");
+        }
+        if (scores.setsPlayer1 > scores.setsPlayer2) {
+            winner = firstPlayerId;
+        } else if (scores.setsPlayer1 < scores.setsPlayer2) {
+            winner = secondPlayerId;
+        } else {
+            throw new TennisDatabaseException("Tennis match score not valid");
+        }
+    }
+
+    /**
+     * Method to check the validity of the match information.
+     *
+     * if the first player id or second player id or tennis match date or location of match or score is null
+     *      throw a tennis database exception
+     * @param firstPlayerId id of the first player
+     * @param secondPlayerId id of the second player
+     * @param tennisMatchDate match date of the tennis match
+     * @param locationOfMatch location of the tennis match
+     * @param score scores from the tennis match
+     * @throws TennisDatabaseException Exception thrown if the tennis match info
+     */
+    private void isMatchInfoValid(String firstPlayerId, String secondPlayerId, String tennisMatchDate
             , String locationOfMatch, String score) throws TennisDatabaseException {
         if(firstPlayerId == null) {
             throw new TennisDatabaseException("firstPlayer Id is not a valid Id");
@@ -64,53 +151,52 @@ public class TennisMatch implements TennisMatchInterface {
             throw new TennisDatabaseException("locationOfMatch is not valid");
         } else if (score == null) {
             throw new TennisDatabaseException("scores is not valid");
-        } else {
-            setFirstPlayerId(firstPlayerId);
-            setSecondPlayerId(secondPlayerId);
-            setTennisMatchDate(tennisMatchDate);
-            setLocationOfMatch(locationOfMatch);
-            setScore(score);
-            this.scores = new TennisMatchSetScore();
-
-            boolean scoreValid = processMatchScore(score, scores);
-            if (!scoreValid) {
-                throw new TennisDatabaseException("Tennis match score not valid");
-            }
-            if (scores.setsPlayer1 > scores.setsPlayer2) {
-                winner = firstPlayerId;
-            } else if (scores.setsPlayer1 < scores.setsPlayer2) {
-                winner = secondPlayerId;
-            } else {
-                throw new TennisDatabaseException("Tennis match score not valid");
-            }
         }
     }
 
+    /**
+     * Method to set the first player id.
+     * @param firstPlayerId id of the first player
+     */
     private void setFirstPlayerId(String firstPlayerId) {
         this.firstPlayerId = firstPlayerId;
     }
 
+    /**
+     * Method to set the second player id.
+     * @param secondPlayerId id of the second player
+     */
     private void setSecondPlayerId(String secondPlayerId) {
         this.secondPlayerId = secondPlayerId;
     }
 
-    public String getTennisMatchDate() {
-        return this.tennisMatchDate;
-    }
-
+    /**
+     * Method to set the tennis match date.
+     * @param tennisMatchDate date of the tennis match
+     */
     private void setTennisMatchDate(String tennisMatchDate) {
         this.tennisMatchDate = tennisMatchDate;
     }
 
-
+    /**
+     * Method to set the location of the tennis match.
+     * @param locationOfMatch location of the tennis match
+     */
     private void setLocationOfMatch(String locationOfMatch) {
         this.locationOfMatch = locationOfMatch;
     }
 
+    /**
+     * Method to set the score of the tennis match.
+     * @param score score of the tennis match
+     */
     private void setScore(String score) {
         this.score = score;
     }
 
+    private String getTennisMatchDate() {
+        return this.tennisMatchDate;
+    }
     public String getPlayer1Id() {
         return this.firstPlayerId;
     }
@@ -140,6 +226,10 @@ public class TennisMatch implements TennisMatchInterface {
     public String getWinner() {
         return winner;
     }
+
+    /**
+     * Method used to print all of the information within the tennis match
+     */
     public void print() {
         System.out.print( firstPlayerId + ", " );
         System.out.print( secondPlayerId + ", ");
@@ -150,7 +240,11 @@ public class TennisMatch implements TennisMatchInterface {
         System.out.println();
     }
 
-
+    /**
+     * Method used to compare a tennis match by date.
+     * @param match The tennis match to compare to
+     * @return whether the date of the tennis match is before or after the date
+     */
     @Override
     public int compareTo(TennisMatch match) {
         if(getDateYear() < match.getDateYear()) {
